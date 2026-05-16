@@ -1,0 +1,15 @@
+syntax = "proto3";
+package imserver;
+
+message DialogRouteDeleteReq {}
+message DialogRouteDeleteResp {}
+
+service ImserverService {
+  // 删除路由规则
+
+  // http POST /cs/v1/b/imserver/dialog_route/delete
+  rpc DialogRouteDelete(DialogRouteDeleteReq) returns (DialogRouteDeleteResp) {}
+
+  rpc InlineRule(DialogRouteDeleteReq) returns (DialogRouteDeleteResp) {} // http POST /cs/v1/b/imserver/dialog_route/inline
+}
+

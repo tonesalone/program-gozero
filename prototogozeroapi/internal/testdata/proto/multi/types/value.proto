@@ -1,0 +1,9 @@
+syntax = "proto3";
+package types;
+
+import "nested.proto";
+
+message ValueMsg {
+  NestedMsg nested = 1;
+}
+

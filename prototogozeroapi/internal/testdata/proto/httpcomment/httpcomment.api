@@ -1,0 +1,21 @@
+syntax = "v1"
+
+type (
+
+    DialogRouteDeleteReq {
+    }
+
+    DialogRouteDeleteResp {
+    }
+
+)
+
+service imserverservice-api {
+
+    @handler DialogRouteDeleteHandler
+    post /cs/v1/b/imserver/dialog_route/delete (DialogRouteDeleteReq) returns (DialogRouteDeleteResp)
+
+    @handler InlineRuleHandler
+    post /cs/v1/b/imserver/dialog_route/inline (DialogRouteDeleteReq) returns (DialogRouteDeleteResp)
+
+}

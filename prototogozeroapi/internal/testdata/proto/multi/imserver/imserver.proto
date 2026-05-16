@@ -1,0 +1,18 @@
+syntax = "proto3";
+package imserver;
+
+import "public/public.proto";
+import "types/value.proto";
+
+message PingReq {
+  int64 id = 1;
+}
+
+message PingResp {
+  string ok = 1;
+}
+
+service Imserver {
+  rpc Ping(PingReq) returns (PingResp) {}
+}
+

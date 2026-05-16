@@ -20,16 +20,41 @@ func Load(path string, importPaths []string) (*Loaded, error) {
 		return nil, err
 	}
 
-	lp := make([]string, 0, len(importPaths)+1)
+	lp := make([]string, 0, len(importPaths)+2)
 	lp = append(lp, filepath.Dir(abs))
-	lp = append(lp, importPaths...)
+	if wd, err := os.Getwd(); err == nil {
+		lp = append(lp, wd)
+	}
+	for _, p := range importPaths {
+		if p == "" {
+			continue
+		}
+		ap, err := filepath.Abs(p)
+		if err == nil {
+			p = ap
+		}
+		lp = append(lp, p)
+	}
+	seen := map[string]bool{}
+	dedup := make([]string, 0, len(lp))
+	for _, p := range lp {
+		if p == "" {
+			continue
+		}
+		p = filepath.Clean(p)
+		if seen[p] {
+			continue
+		}
+		seen[p] = true
+		dedup = append(dedup, p)
+	}
 
 	out := &Loaded{
 		Files: map[string]*File{},
 	}
 
 	visiting := map[string]bool{}
-	root, err := loadOne(abs, lp, visiting, out.Files)
+	root, err := loadOne(abs, dedup, visiting, out.Files)
 	if err != nil {
 		return nil, err
 	}
@@ -85,20 +110,48 @@ func loadOne(absPath string, importPaths []string, visiting map[string]bool, fil
 		}),
 		proto.WithService(func(s *proto.Service) {
 			svc := Service{Name: s.Name}
+			var pending []string
+			flushPending := func() string {
+				if len(pending) == 0 {
+					return ""
+				}
+				s := strings.Join(pending, "\n")
+				pending = pending[:0]
+				return s
+			}
 			for _, e := range s.Elements {
-				r, ok := e.(*proto.RPC)
-				if !ok {
+				switch el := e.(type) {
+				case *proto.Comment:
+					pending = append(pending, el.Message())
 					continue
+				case *proto.RPC:
+					r := el
+					rpc := Rpc{
+						Name:     r.Name,
+						Request:  r.RequestType,
+						Response: r.ReturnsType,
+					}
+					var cands []string
+					if r.Comment != nil {
+						cands = append(cands, r.Comment.Message())
+					}
+					if r.InlineComment != nil {
+						cands = append(cands, r.InlineComment.Message())
+					}
+					if s := flushPending(); s != "" {
+						cands = append(cands, s)
+					}
+					for _, c := range cands {
+						rule := parseHTTPRule(c)
+						if rule.Method != "" && rule.Path != "" {
+							rpc.Http = rule
+							break
+						}
+					}
+					svc.Rpcs = append(svc.Rpcs, rpc)
+				default:
+					pending = pending[:0]
 				}
-				rpc := Rpc{
-					Name:     r.Name,
-					Request:  r.RequestType,
-					Response: r.ReturnsType,
-				}
-				if r.Comment != nil {
-					rpc.Http = parseHTTPRule(r.Comment.Message())
-				}
-				svc.Rpcs = append(svc.Rpcs, rpc)
 			}
 			f.Services = append(f.Services, svc)
 		}),
@@ -135,6 +188,11 @@ func parseHTTPRule(comment string) HttpRule {
 func resolveImport(fromAbs string, importName string, importPaths []string) (string, error) {
 	if filepath.IsAbs(importName) {
 		return importName, nil
+	}
+
+	cand := filepath.Join(filepath.Dir(fromAbs), importName)
+	if st, err := os.Stat(cand); err == nil && !st.IsDir() {
+		return filepath.Abs(cand)
 	}
 
 	for _, base := range importPaths {
@@ -180,4 +238,3 @@ func collectMessages(elements []proto.Visitee, prefix []string, out *[]Message) 
 		collectMessages(m.Elements, nextPrefix, out)
 	}
 }
-
