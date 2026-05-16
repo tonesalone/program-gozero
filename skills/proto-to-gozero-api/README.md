@@ -31,3 +31,4 @@ Use proto-to-gozero-api.
 Generate <target>.api from <source>.proto.
 Prefer proto HTTP annotations; if missing, ask for fallback route policy before generation.
 ```
+

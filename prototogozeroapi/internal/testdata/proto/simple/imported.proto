@@ -1,0 +1,7 @@
+syntax = "proto3";
+package cs.v1;
+
+message ImportedMsg {
+  int64 id = 1;
+}
+

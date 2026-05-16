@@ -1,0 +1,19 @@
+syntax = "proto3";
+package cs.v1;
+
+import "imported.proto";
+
+message AddReq {
+  string book = 1;
+  ImportedMsg other = 2;
+}
+
+message AddResp {
+  string ok = 1;
+}
+
+service Book {
+  // http POST /cs/v1/mod/add
+  rpc Add(AddReq) returns (AddResp) {}
+}
+
