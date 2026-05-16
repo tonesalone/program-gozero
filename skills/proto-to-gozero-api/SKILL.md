@@ -46,6 +46,7 @@ Strict scope rule:
 - Keep semantic field names; avoid unnecessary renaming
 - Type naming follows sample style: `AddReq` -> `addReq`, `CheckResp` -> `checkResp`
 - Request types must include both `json` and `form` tags (sample style)
+- Every generated `form` tag MUST include the `,optional` option, e.g. `form:"book,optional"`
 - Response types should include `json` tags at minimum
 
 Example:
@@ -61,8 +62,8 @@ message AddReq {
 API:
 ```text
 addReq {
-  book string `json:"book" form:"book"`
-  price int64 `json:"price" form:"price"`
+  book string `json:"book" form:"book,optional"`
+  price int64 `json:"price" form:"price,optional"`
 }
 ```
 
@@ -104,11 +105,13 @@ post /cs/v1/modname/add (addReq) returns (addResp)
 ## Execution workflow
 
 1. Read and parse proto services/messages
-2. Extract endpoint mapping source (annotation or convention)
-3. Generate go-zero `type` blocks from messages
-4. Generate endpoint declarations from RPCs
-5. Validate naming consistency and contract compatibility
-6. Return final `.api` plus a short mapping summary
+2. If a `*.proto.apisrc` file exists, compare it with the latest `.proto` and identify changes first
+3. Extract endpoint mapping source (annotation or convention)
+4. Generate go-zero `type` blocks from messages (incremental: apply all detected proto changes)
+5. Generate endpoint declarations from RPCs (incremental: apply all detected proto changes)
+6. Validate naming consistency and contract compatibility
+7. Write the final `.api`, then copy the latest `.proto` to `*.proto.apisrc` as the generation baseline
+8. Return final `.api` plus a short mapping summary
 
 ## Clarification triggers
 
@@ -127,7 +130,7 @@ Stop and ask before generation when:
 - Generated content is deterministic and style-consistent
 - Only service-related messages are converted
 - HTTP comment method/path mapping is exact and case-normalized for go-zero keywords
-- Request tags include both `json` and `form`
+- Request tags include both `json` and `form`, and every `form` tag includes `,optional`
 
 ## Minimal output template
 

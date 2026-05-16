@@ -44,3 +44,8 @@ Invoke this skill whenever:
 - Implement the smallest change that satisfies the request
 - Avoid speculative abstractions, new layers, and over-generalization
 - Prefer straightforward code over "future-proof" complexity
+
+### 6. Fix the Root Cause of Bugs
+- If the program has an error or bug, do not try to hide it or “patch around it” to make the symptom disappear
+- Identify the real root cause and fix that cause directly
+- Only treat it as an external constraint when the root cause is outside your codebase (e.g., third-party tools, databases, or other external components)
