@@ -46,6 +46,7 @@ description: "从 protobuf .proto 生成 go-zero .api。用户要求将 proto �
 - 保留语义化字段名，避免无必要重命名
 - 类型命名遵循样式：`AddReq` -> `addReq`，`CheckResp` -> `checkResp`
 - 请求结构必须包含 `json` 和 `form` 两类 tag
+- 生成的 `form` tag 必须带上 `,optional` 选项，例如：`form:"book,optional"`
 - 响应结构至少包含 `json` tag
 
 示例：
@@ -61,8 +62,8 @@ message AddReq {
 API：
 ```text
 addReq {
-  book string `json:"book" form:"book"`
-  price int64 `json:"price" form:"price"`
+  book string `json:"book" form:"book,optional"`
+  price int64 `json:"price" form:"price,optional"`
 }
 ```
 
@@ -104,11 +105,13 @@ post /cs/v1/modname/add (addReq) returns (addResp)
 ## 执行流程
 
 1. 解析 proto 的 service/message/rpc
-2. 提取接口映射来源（注解或约定）
-3. 生成 go-zero `type` 块
-4. 生成 RPC 对应接口声明
-5. 校验命名一致性与兼容性
-6. 输出 `.api` 与简短映射说明
+2. 若存在 `*.proto.apisrc`，先与最新 `.proto` 对比并识别所有变动
+3. 提取接口映射来源（注解或约定）
+4. 生成 go-zero `type` 块（增量：纳入 proto 的所有变动）
+5. 生成 RPC 对应接口声明（增量：纳入 proto 的所有变动）
+6. 校验命名一致性与兼容性
+7. 写入最终 `.api` 后，将最新 `.proto` 拷贝为 `*.proto.apisrc` 作为后续增量生成基线
+8. 输出 `.api` 与简短映射说明
 
 ## 必须先澄清的情况
 
@@ -127,4 +130,4 @@ post /cs/v1/modname/add (addReq) returns (addResp)
 - 生成结果可复现且风格一致
 - 只转换 service 相关的数据结构
 - HTTP 注释中的 method/path 与 API 映射准确一致
-- 请求结构同时具备 `json` 与 `form` tag
+- 请求结构同时具备 `json` 与 `form` tag，且每个 `form` tag 都包含 `,optional`
