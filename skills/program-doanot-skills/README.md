@@ -14,6 +14,8 @@ Use it as a default rule set for feature work, bug fixes, refactors, and impleme
 - Prevents infinite loops with explicit termination requirements
 - Promotes focused, minimal, request-driven code changes
 - Encourages simple implementations over speculative abstractions
+- Reuses existing protocol/type definitions to keep a single source of truth
+- Improves observability with actionable logs at key failure points
 
 ## When To Invoke
 
@@ -53,6 +55,16 @@ Invoke this skill when:
 - Implement the smallest change that meets the requirement.
 - Avoid speculative abstractions and unnecessary layers.
 - Prefer straightforward code over "future-proof" complexity.
+
+6. Follow Existing Protocol Conventions (No Duplicates)
+- Protocol definitions must follow the existing protocol/spec conventions in the codebase.
+- If a structure/message/type already exists somewhere, do not redefine it in another place.
+- Reuse the same shared type to keep a single source of truth.
+
+7. Observability and Operability (Log Key Steps)
+- Log at important steps and on errors (e.g., Redis errors, database errors, upstream/API call failures).
+- Logs must include key identifiers where applicable (e.g., `key`, `user_id`, `request_id`).
+- Never log secrets or sensitive payloads (tokens, passwords, full PII).
 
 ## Usage Example
 

@@ -23,6 +23,8 @@ The agent should consistently enforce:
 - Explicit termination safeguards for loops, retries, polling, and recursion
 - Minimal, task-scoped, surgical edits only
 - Simplicity-first implementation choices
+- Follow existing protocol conventions; reuse existing types and avoid duplicate definitions
+- Ensure observability: log key steps and failures with identifiers (e.g., `key`, `user_id`, `request_id`)
 
 ## Recommended Session Checklist
 
@@ -31,6 +33,8 @@ The agent should consistently enforce:
 - Add termination conditions for any repeated flow
 - Validate modified areas and check for regressions
 - Ensure no unrelated refactor is introduced
+- Confirm protocol/type definitions are not duplicated across modules
+- Confirm key error paths (Redis/DB/API) emit actionable logs with identifying context
 
 ## Notes
 
