@@ -49,3 +49,14 @@ Invoke this skill whenever:
 - If the program has an error or bug, do not try to hide it or “patch around it” to make the symptom disappear
 - Identify the real root cause and fix that cause directly
 - Only treat it as an external constraint when the root cause is outside your codebase (e.g., third-party tools, databases, or other external components)
+
+### 7. Follow Existing Protocol Conventions (No Duplicates)
+- Protocol definitions must follow the existing protocol/spec conventions in the codebase
+- If a structure/message/type already exists somewhere, do not redefine it in another place
+- Reuse the same shared type to keep a single source of truth and avoid split-brain updates
+
+### 8. Observability and Operability (Log Key Steps)
+- Log at important steps and on errors (e.g., Redis errors, database errors, upstream/API call failures)
+- Logs must include key identifiers where applicable (e.g., `key`, `user_id`, `request_id`) to support debugging and operations
+- Use structured logging when available; include enough context to locate the failing dependency and operation
+- Never log secrets or sensitive payloads (tokens, passwords, full PII)

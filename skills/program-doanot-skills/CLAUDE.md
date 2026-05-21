@@ -21,6 +21,8 @@ During execution, ensure the agent:
 - Avoids unbounded loops and adds termination guards
 - Makes surgical changes only
 - Keeps implementation minimal and simple
+- Reuses existing protocol/type definitions; do not duplicate structures
+- Logs key steps and errors with identifying context (e.g., `key`, `user_id`, `request_id`)
 
 ## Suggested Prompt Snippet
 
@@ -32,6 +34,8 @@ Non-negotiable constraints:
 3) No infinite loops; retries/polling/recursion require termination guards.
 4) Keep edits minimal and limited to relevant files.
 5) Avoid speculative abstractions.
+6) Follow existing protocol conventions; never redefine a type that already exists.
+7) Add actionable logs at key steps and on failures (Redis/DB/API), including key identifiers.
 ```
 
 ## Verification Expectations
@@ -42,3 +46,5 @@ Before claiming completion, confirm:
 - Complexity choice is justified
 - Loop-related logic has explicit stop conditions
 - Changed lines are directly traceable to the request
+- Protocol/type definitions are reused and not duplicated
+- Key failure points are observable via logs with identifiers
