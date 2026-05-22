@@ -60,3 +60,8 @@ Invoke this skill whenever:
 - Logs must include key identifiers where applicable (e.g., `key`, `user_id`, `request_id`) to support debugging and operations
 - Use structured logging when available; include enough context to locate the failing dependency and operation
 - Never log secrets or sensitive payloads (tokens, passwords, full PII)
+
+### 9. DRY Principle (Do Not Repeat Yourself)
+- Do not write duplicate code. If a piece of code or feature is used in multiple places, extract it into a shared function to ensure modularity and encapsulation.
+- Intra-module: If code is used in 2 or more places within the same module, extract it into a common function call.
+- Cross-module: If code has the same functionality in 2 or more modules (e.g., generating JWT tokens, database access, message queue pub/sub, Redis access), extract it into a shared module or common code for reuse across modules.

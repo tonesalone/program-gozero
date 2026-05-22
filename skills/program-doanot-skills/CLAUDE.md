@@ -23,6 +23,7 @@ During execution, ensure the agent:
 - Keeps implementation minimal and simple
 - Reuses existing protocol/type definitions; do not duplicate structures
 - Logs key steps and errors with identifying context (e.g., `key`, `user_id`, `request_id`)
+- Enforces DRY principle by extracting duplicate code into shared functions or common cross-module code
 
 ## Suggested Prompt Snippet
 
@@ -36,6 +37,7 @@ Non-negotiable constraints:
 5) Avoid speculative abstractions.
 6) Follow existing protocol conventions; never redefine a type that already exists.
 7) Add actionable logs at key steps and on failures (Redis/DB/API), including key identifiers.
+8) Apply DRY principle: do not repeat code; extract shared functions for 2+ usages within a module, and common code for cross-module features (JWT, DB, MQ, Redis).
 ```
 
 ## Verification Expectations
@@ -48,3 +50,4 @@ Before claiming completion, confirm:
 - Changed lines are directly traceable to the request
 - Protocol/type definitions are reused and not duplicated
 - Key failure points are observable via logs with identifiers
+- Duplicate code is extracted into shared functions or common modules

@@ -25,6 +25,7 @@ The agent should consistently enforce:
 - Simplicity-first implementation choices
 - Follow existing protocol conventions; reuse existing types and avoid duplicate definitions
 - Ensure observability: log key steps and failures with identifiers (e.g., `key`, `user_id`, `request_id`)
+- Enforce DRY principle: extract duplicate code into shared functions (intra-module) or common code (cross-module for things like JWT, DB, MQ, Redis)
 
 ## Recommended Session Checklist
 
@@ -35,6 +36,7 @@ The agent should consistently enforce:
 - Ensure no unrelated refactor is introduced
 - Confirm protocol/type definitions are not duplicated across modules
 - Confirm key error paths (Redis/DB/API) emit actionable logs with identifying context
+- Confirm no duplicated code is written; extract shared functions and common code when used in multiple places
 
 ## Notes
 
