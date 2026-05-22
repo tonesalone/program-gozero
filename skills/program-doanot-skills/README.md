@@ -16,6 +16,7 @@ Use it as a default rule set for feature work, bug fixes, refactors, and impleme
 - Encourages simple implementations over speculative abstractions
 - Reuses existing protocol/type definitions to keep a single source of truth
 - Improves observability with actionable logs at key failure points
+- Enforces DRY principle by extracting duplicate code into shared functions and common modules
 
 ## When To Invoke
 
@@ -65,6 +66,12 @@ Invoke this skill when:
 - Log at important steps and on errors (e.g., Redis errors, database errors, upstream/API call failures).
 - Logs must include key identifiers where applicable (e.g., `key`, `user_id`, `request_id`).
 - Never log secrets or sensitive payloads (tokens, passwords, full PII).
+
+8. DRY Principle (Do Not Repeat Yourself)
+- Do not write duplicate code.
+- If a feature or logic is used in multiple places, extract it into a shared function for modularity and encapsulation.
+- Intra-module: Extract common function calls for code used in 2+ places within a module.
+- Cross-module: Extract shared code (e.g., JWT generation, DB access, MQ pub/sub, Redis access) used in 2+ modules into a common module.
 
 ## Usage Example
 
